@@ -1,7 +1,15 @@
 <script>
 	import register from "../routes/register.svelte";
 
-	export let segment;
+		import { stores } from '@sapper/app';
+
+		const { page, session } = stores();
+
+		async function logout(){
+			await post(`auth/logout`);
+			$session.user= null;
+			goto('/')
+		}
 </script>
 
 <style>
@@ -52,6 +60,11 @@
 
 <nav>
 	<ul>
-		<li><a aria-current="{segment === 'Register' ? 'page' : undefined}" href="register">Register</a></li>
+		{#if $session.token}
+		<li><a aria-current="{segment === 'logout' ? 'page' : undefined}"href="logout" on:click|preventDefault={"logout"}>logout</a></li>
+		{:else}
+		<li><a aria-current="{segment === 'login' ? 'page' : undefined}" href="login">log in</a></li>
+		<li><a aria-current="{segment === 'register' ? 'page' : undefined}" href="register">register</a></li>
+			{/if}
 	</ul>
 </nav>
